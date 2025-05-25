@@ -295,6 +295,8 @@ def get_gguf_hf_weights_map(
         model_type = "command-r"
     elif model_type == "qwen2_moe":
         model_type = "qwen2moe"
+    if model_type == "deepseek_v3":
+        model_type = "deepseek2"
     elif model_type == "gemma3_text":
         model_type = "gemma3"
     arch = None
@@ -391,6 +393,12 @@ def load_gguf_checkpoint(gguf_checkpoint_path, return_tensors=False, model_to_lo
 
     if "qwen2moe" in architecture:
         updated_architecture = "qwen2_moe"
+    
+    if "deepseek2" in architecture:
+        updated_architecture = "deepseek_v3"
+        parsed_parameters["config"]["topk_method"] = "noaux_tc"
+        parsed_parameters["config"]["moe_layer_freq"] = 1
+        parsed_parameters["config"]["scoring_func"] = "sigmoid"
 
     # For stablelm architecture, we need to set qkv_bias and use_parallel_residual from tensors
     # If `qkv_bias=True`, qkv_proj with bias will be present in the tensors
